@@ -16,7 +16,7 @@ class Config:
 
     if uri and uri.startswith("postgresql://"):
     # Force SQLAlchemy to use pg8000
-    uri = uri.replace("postgresql://", "postgresql+pg8000://", 1)
+        uri = uri.replace("postgresql://", "postgresql+pg8000://", 1)
 
     SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_TRACK_MODIFICATIONS = False
