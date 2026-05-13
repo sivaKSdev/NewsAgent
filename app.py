@@ -210,14 +210,14 @@ def save_news():
         return jsonify({'success': False, 'message': 'Invalid data'}), 400
 
     try:
-        # Check if already saved
-        existing = SavedNews.query.filter_by(
-            user_id=current_user.id,
-            url=data.get('url')
-        ).first()
-
-        if existing:
-            return jsonify({'success': False, 'message': 'News already saved'}), 409
+        published_at_str = data.get('published_at')
+        published_at = None
+        if published_at_str:
+            try:
+                published_at = datetime.fromisoformat(
+                    published_at_str.replace('Z', '+00:00'))
+            except (ValueError, AttributeError):
+                published_at = None
 
         saved_news = SavedNews(
             user_id=current_user.id,
@@ -225,7 +225,7 @@ def save_news():
             description=data.get('description', ''),
             url=data.get('url'),
             source=data.get('source', 'Unknown'),
-            published_at=data.get('published_at')
+            published_at=published_at
         )
 
         db.session.add(saved_news)
