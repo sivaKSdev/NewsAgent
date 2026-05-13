@@ -1,0 +1,170 @@
+{% extends "base.html" %} {% block title %}Login - News Agent{% endblock %} {%
+block extra_style %}
+<style>
+  .auth-container {
+    max-width: 450px;
+    margin: 5rem auto;
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.5s ease;
+    border: 1px solid var(--border);
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .auth-container h1 {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.7rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background-color: rgba(102, 126, 234, 0.02);
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+  }
+
+  .form-group.submit {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group.submit button {
+    width: 100%;
+  }
+
+  .auth-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .auth-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .auth-link a::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+  }
+
+  .auth-link a:hover::after {
+    width: 100%;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="auth-container">
+  <h1>Welcome Back 👋</h1>
+
+  <form method="POST" action="{{ url_for('login') }}">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        autofocus
+        placeholder="Enter your username"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        placeholder="Enter your password"
+      />
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="remember_me" name="remember_me" />
+        <label for="remember_me" style="margin-bottom: 0; cursor: pointer"
+          >Remember me for 7 days</label
+        >
+      </div>
+    </div>
+
+    <div class="form-group submit">
+      <button type="submit" class="btn btn-primary" style="width: 100%">
+        Sign In
+      </button>
+    </div>
+  </form>
+
+  <div class="auth-link">
+    Don't have an account?
+    <a href="{{ url_for('register') }}">Create one now</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}News Agent{% endblock %}</title>
+    <style>
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      :root {
+          --primary: #667eea;
+          --primary-dark: #5568d3;
+          --secondary: #764ba2;
+          --success: #10b981;
+          --danger: #ef4444;
+          --warning: #f59e0b;
+          --info: #3b82f6;
+          --light: #f3f4f6;
+          --dark: #1f2937;
+          --border: #e5e7eb;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      html {
+          scroll-behavior: smooth;
+      }
+
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          color: var(--dark);
+          line-height: 1.6;
+      }
+
+      nav {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          box-shadow: var(--shadow-sm);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          border-bottom: 1px solid var(--border);
+      }
+
+      .navbar-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 2rem;
+      }
+
+      .navbar-brand {
+          font-size: 1.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, var(--primary), var(--secondary));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          transition: transform 0.3s ease;
+      }
+
+      .navbar-brand:hover {
+          transform: scale(1.05);
+      }
+
+      .navbar-menu {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+          list-style: none;
+      }
+
+      .navbar-menu a {
+          color: var(--dark);
+          text-decoration: none;
+          padding: 0.6rem 1.2rem;
+          border-radius: 6px;
+          transition: all 0.3s ease;
+          font-weight: 500;
+          position: relative;
+      }
+
+      .navbar-menu a::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: var(--primary);
+          transition: width 0.3s ease;
+      }
+
+      .navbar-menu a:hover::after {
+          width: 100%;
+      }
+
+      .navbar-menu a:hover {
+          background-color: var(--light);
+      }
+
+      .navbar-user {
+          color: var(--dark);
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          font-weight: 500;
+      }
+
+      .container {
+          max-width: 1200px;
+          margin: 2rem auto;
+          padding: 0 2rem;
+      }
+
+      .flash-messages {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-bottom: 2rem;
+      }
+
+      .alert {
+          padding: 1.2rem;
+          border-radius: 8px;
+          border-left: 4px solid;
+          background-color: #f8f9fa;
+          animation: slideInDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          box-shadow: var(--shadow-sm);
+      }
+
+      @keyframes slideInDown {
+          from {
+              transform: translateY(-20px);
+              opacity: 0;
+          }
+          to {
+              transform: translateY(0);
+              opacity: 1;
+          }
+      }
+
+      .alert-success {
+          background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+          border-color: var(--success);
+          color: #065f46;
+      }
+
+      .alert-error {
+          background: linear-gradient(135deg, #fee2e2, #fef2f2);
+          border-color: var(--danger);
+          color: #7f1d1d;
+      }
+
+      .alert-warning {
+          background: linear-gradient(135deg, #fef3c7, #fffbeb);
+          border-color: var(--warning);
+          color: #78350f;
+      }
+
+      .alert-info {
+          background: linear-gradient(135deg, #dbeafe, #eff6ff);
+          border-color: var(--info);
+          color: #1e3a8a;
+      }
+
+      .btn {
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+          font-weight: 600;
+          position: relative;
+          overflow: hidden;
+      }
+
+      .btn::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.2);
+          transform: translate(-50%, -50%);
+          transition: width 0.6s, height 0.6s;
+      }
+
+      .btn:active::before {
+          width: 300px;
+          height: 300px;
+      }
+
+      .btn-primary {
+          background: linear-gradient(135deg, var(--primary), var(--secondary));
+          color: white;
+          box-shadow: var(--shadow-sm);
+      }
+
+      .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+          background-color: #e5e7eb;
+          color: var(--dark);
+      }
+
+      .btn-secondary:hover {
+          background-color: #d1d5db;
+          transform: translateY(-2px);
+      }
+
+      .btn-danger {
+          background-color: var(--danger);
+          color: white;
+      }
+
+      .btn-danger:hover {
+          background-color: #dc2626;
+          transform: translateY(-2px);
+      }
+
+      .btn-small {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+      }
+
+      .btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none !important;
+      }
+
+      footer {
+          background: rgba(0, 0, 0, 0.8);
+          color: #fff;
+          text-align: center;
+          padding: 2rem;
+          margin-top: 6rem;
+          backdrop-filter: blur(10px);
+      }
+
+      .footer-text {
+          max-width: 1200px;
+          margin: 0 auto;
+      }
+
+      .modal {
+          animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+          animation: slideUp 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+          from {
+              transform: translateY(30px);
+              opacity: 0;
+          }
+          to {
+              transform: translateY(0);
+              opacity: 1;
+          }
+      }
+
+      .toast {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: var(--shadow);
+          animation: slideInRight 0.3s ease;
+          max-width: 400px;
+          z-index: 3000;
+      }
+
+      @keyframes slideInRight {
+          from {
+              transform: translateX(400px);
+              opacity: 0;
+          }
+          to {
+              transform: translateX(0);
+              opacity: 1;
+          }
+      }
+
+      .toast.success {
+          border-left: 4px solid var(--success);
+      }
+
+      .toast.error {
+          border-left: 4px solid var(--danger);
+      }
+
+      .loading {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          border: 3px solid var(--light);
+          border-top-color: var(--primary);
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+          to { transform: rotate(360deg); }
+      }
+
+      {% block extra_style %}{% endblock %}
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">📰 News Agent</a>
+
+        {% if current_user.is_authenticated %}
+        <ul class="navbar-menu">
+          <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('saved_news') }}">Saved News</a></li>
+          <li><a href="#" onclick="openSearchModal(event)">🔍 Search</a></li>
+        </ul>
+        <div class="navbar-user">
+          <span>👤 {{ current_user.username }}</span>
+          <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small"
+            >Logout</a
+          >
+        </div>
+        {% else %}
+        <ul class="navbar-menu">
+          <li><a href="{{ url_for('login') }}">Login</a></li>
+          <li><a href="{{ url_for('register') }}">Register</a></li>
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          <span
+            >{% if category == 'success' %}✓{% elif category == 'error' %}✕{%
+            elif category == 'warning' %}⚠{% else %}ℹ{% endif %}</span
+          >
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <!-- Search Modal -->
+    <div
+      id="searchModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      "
+      class="modal"
+    >
+      <div
+        style="
+          background: white;
+          padding: 2.5rem;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 500px;
+          box-shadow: var(--shadow);
+        "
+        class="modal-content"
+      >
+        <h2 style="margin-bottom: 1.5rem; color: var(--dark)">
+          🔍 Search News
+        </h2>
+        <form
+          method="GET"
+          action="{{ url_for('search') }}"
+          style="display: flex; gap: 0.75rem"
+        >
+          <input
+            type="text"
+            name="q"
+            placeholder="Enter keywords..."
+            required
+            style="
+              flex: 1;
+              padding: 0.75rem 1rem;
+              border: 2px solid var(--border);
+              border-radius: 6px;
+              font-size: 1rem;
+              transition: all 0.3s ease;
+            "
+            onmouseover="this.style.borderColor = 'var(--primary)'"
+            onmouseout="this.style.borderColor = 'var(--border)'"
+          />
+          <button type="submit" class="btn btn-primary">Search</button>
+          <button
+            type="button"
+            onclick="closeSearchModal()"
+            class="btn btn-secondary"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function openSearchModal(event) {
+        event.preventDefault();
+        document.getElementById("searchModal").style.display = "flex";
+        document.querySelector('input[name="q"]').focus();
+      }
+
+      function closeSearchModal() {
+        document.getElementById("searchModal").style.display = "none";
+      }
+
+      function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = "slideInRight 0.3s ease reverse";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      function saveNews(event, title, description, url, source, publishedAt) {
+        event.preventDefault();
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.innerHTML = '<span class="loading"></span>';
+        btn.disabled = true;
+
+        fetch('{{ url_for("save_news") }}', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            url: url,
+            source: source,
+            published_at: publishedAt,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showToast("✓ News saved successfully!", "success");
+              btn.textContent = "✓ Saved";
+              btn.style.background =
+                "linear-gradient(135deg, var(--success), #10b981)";
+            } else {
+              showToast("✕ " + data.message, "error");
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showToast("✕ An error occurred", "error");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          });
+      }
+
+      document
+        .getElementById("searchModal")
+        ?.addEventListener("click", function (e) {
+          if (e.target === this) closeSearchModal();
+        });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSearchModal();
+      });
+    </script>
+    {% endif %}
+
+    <footer>
+      <div class="footer-text">
+        <p>
+          &copy; 2026 News Agent. Your personalized news platform. | All rights
+          reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
