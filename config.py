@@ -6,15 +6,29 @@ class Config:
     """Base configuration"""
     SECRET_KEY = os.environ.get(
         'SECRET_KEY') or 'dev-secret-key-change-in-production'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///news_app.db'
+
+    # Database Configuration - Support both SQLite and PostgreSQL
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
+        # Convert postgres:// to postgresql:// for SQLAlchemy 1.4+
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///news_app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SESSION_COOKIE_SECURE = False
+
+    # Session Configuration
+    SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     # News API configuration
-    NEWS_API_KEY = os.environ.get(
-        'NEWS_API_KEY') or 'demo'  # Get from newsapi.org
-    NEWS_REFRESH_INTERVAL = 3600  # Refresh news every hour (in seconds)
+    NEWS_API_KEY = os.environ.get('NEWS_API_KEY') or 'demo'
+    NEWS_REFRESH_INTERVAL = 3600  # Refresh news every hour
 
     # Flask-Login configuration
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
+
+    # Production settings
+    FLASK_ENV = os.environ.get('FLASK_ENV', 'development')
+    FLASK_DEBUG = FLASK_ENV != 'production'
