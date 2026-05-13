@@ -8,16 +8,13 @@ class Config:
         'SECRET_KEY') or 'dev-secret-key-change-in-production'
 
     # Database Configuration - Support both SQLite and PostgreSQL
-    DATABASE_URL = os.environ.get('DATABASE_URL')
-    if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
-        # Convert postgres:// to postgresql:// for SQLAlchemy 1.4+
-        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-        SQLALCHEMY_DATABASE_URI = os.environ.get(
-    "DATABASE_URL"
-).replace("postgres://", "postgresql+pg8000://")
+    uri = os.environ.get("DATABASE_URL")
 
+    if uri and uri.startswith("postgres://"):
+        # Force SQLAlchemy to use pg8000
+        uri = uri.replace("postgres://", "postgresql+pg8000://", 1)
 
-    # SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///news_app.db'
+    SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Session Configuration
