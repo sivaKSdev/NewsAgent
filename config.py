@@ -10,9 +10,9 @@ class Config:
     # Database Configuration - Support both SQLite and PostgreSQL
     uri = os.environ.get("DATABASE_URL")
 
-    if uri and uri.startswith("postgres://"):
-        # Force SQLAlchemy to use pg8000
-        uri = uri.replace("postgres://", "postgresql+pg8000://", 1)
+    # if uri and uri.startswith("postgres://"):
+    #     # Force SQLAlchemy to use pg8000
+    #     uri = uri.replace("postgres://", "postgresql+pg8000://", 1)
 
     if uri and uri.startswith("postgresql://"):
     # Force SQLAlchemy to use pg8000
