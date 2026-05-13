@@ -12,8 +12,12 @@ class Config:
     if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
         # Convert postgres:// to postgresql:// for SQLAlchemy 1.4+
         DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+        SQLALCHEMY_DATABASE_URI = os.environ.get(
+    "DATABASE_URL"
+).replace("postgres://", "postgresql+pg8000://")
 
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///news_app.db'
+
+    # SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///news_app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Session Configuration
