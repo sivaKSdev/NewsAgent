@@ -10,12 +10,6 @@
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "wsgi.py"
-    }
-  ],
   "env": {
     "FLASK_ENV": "production",
     "PYTHONUNBUFFERED": "1"
